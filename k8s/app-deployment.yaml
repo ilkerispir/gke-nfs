@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: app
+  template:
+    metadata:
+      labels:
+        run: app
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: app-nodes
+      containers:
+      - image: ilkerispir/gke-nfs:latest
+        imagePullPolicy: Always
+        name: app
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: app-pvc-nfs
+          mountPath: "/uploads"
+      volumes:
+      - name: app-pvc-nfs
+        persistentVolumeClaim:
+          claimName: pvc-nfs

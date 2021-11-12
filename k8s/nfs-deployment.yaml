@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-nfs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: app-nfs
+  template:
+    metadata:
+      labels:
+        role: app-nfs
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: nfs-nodes
+      containers:
+      - name: app-nfs
+        image: gcr.io/google_containers/volume-nfs:0.8
+        ports:
+          - name: nfs
+            containerPort: 2049
+          - name: mountd
+            containerPort: 20048
+          - name: rpcbind
+            containerPort: 111
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - mountPath: /uploads
+            name: app-pvc
+      volumes:
+        - name: app-pvc
+          gcePersistentDisk:
+            pdName: app-disk
+            fsType: ext4
