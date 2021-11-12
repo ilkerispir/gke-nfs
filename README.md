@@ -1,2 +1,1 @@
-# gke-nfs
-NFS Persistent Volumes with Kubernetes on GKE
+# NFS Persistent Volumes with Kubernetes on GKE
